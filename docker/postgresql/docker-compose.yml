@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:${POSTGRES_VERSION:-17}
+    security_opt:
+      - "no-new-privileges:true"
+    cap_drop:
+      - ALL
+    # Allow only volume ownership and mode fixes needed during init.
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - SETUID
+      - SETGID
+    # The official image needs to bootstrap as root, fix directory ownership,
+    # then drop to the built-in postgres user.
+    container_name: ${POSTGRES_CONTAINER_NAME:-my-postgres}
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT:?POSTGRES_PORT is required}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      app_a_net:
+        ipv4_address: ${POSTGRES_NETWORK_DB_IP:?POSTGRES_NETWORK_DB_IP is required}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 5432 -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  postgres_data:
+
+networks:
+  app_a_net:
+    name: ${POSTGRES_NETWORK_NAME:?POSTGRES_NETWORK_NAME is required}
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${POSTGRES_NETWORK_SUBNET:?POSTGRES_NETWORK_SUBNET is required}
+          gateway: ${POSTGRES_NETWORK_GATEWAY:?POSTGRES_NETWORK_GATEWAY is required}
