@@ -1,0 +1,21 @@
+services:
+  restic:
+    image: restic/restic:${RESTIC_IMAGE_TAG:-0.17.3}
+    container_name: ${RESTIC_CONTAINER_NAME:-restic}
+    security_opt:
+      - "no-new-privileges:true"
+    cap_drop:
+      - ALL
+    user: "${RESTIC_UID:-1000}:${RESTIC_GID:-1000}"
+    restart: "no"
+    environment:
+      RESTIC_REPOSITORY: ${RESTIC_REPOSITORY:?RESTIC_REPOSITORY is required}
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD:?RESTIC_PASSWORD is required}
+      TZ: ${TZ:-UTC}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-}
+      AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL:-}
+    volumes:
+      - ${RESTIC_SOURCE_PATH:?RESTIC_SOURCE_PATH is required}:/data:ro
+    command: ["backup", "/data"]
