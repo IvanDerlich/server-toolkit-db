@@ -64,7 +64,7 @@ logs:
 	@cd "$(MARIA_DIR)" && $(COMPOSE) logs -f mariadb
 
 connect:
-	source .env && printf '%s\n' \
+	@source .env && printf '%s\n' \
 		'' \
 		'Connect from the host:' \
 		"mariadb -h 127.0.0.1 -P $${MARIADB_PORT:-3306} -u $${MARIADB_USER:-appuser} -p $${MARIADB_DATABASE:-app}" \
