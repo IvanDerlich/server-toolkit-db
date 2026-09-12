@@ -64,21 +64,18 @@ logs:
 	@cd "$(MARIA_DIR)" && $(COMPOSE) logs -f mariadb
 
 connect:
-	if ! command -v mariadb >/dev/null 2>&1; then \
-		printf '%s\n' \
-			'' \
-			'MariaDB client not found. Install it with one of:' \
-			'  Debian/Ubuntu: sudo apt install mariadb-client' \
-			'  Fedora/RHEL:   sudo dnf install mariadb' \
-			'  Alpine:        sudo apk add mariadb-client' \
-			'  Homebrew:      brew install mariadb-connector-c'; \
-	fi; \
 	source .env && printf '%s\n' \
 		'' \
 		'Connect from the host:' \
 		"mariadb -h 127.0.0.1 -P $${MARIADB_PORT:-3306} -u $${MARIADB_USER:-appuser} -p $${MARIADB_DATABASE:-app}" \
 		'' \
 		'Connect as root:' \
-		"mariadb -h 127.0.0.1 -P $${MARIADB_PORT:-3306} -u root -p"
+		"mariadb -h 127.0.0.1 -P $${MARIADB_PORT:-3306} -u root -p" \
+		'' \
+		'If the mariadb utility is not installed, use one of:' \
+		'  Debian/Ubuntu: sudo apt install mariadb-client' \
+		'  Fedora/RHEL:   sudo dnf install mariadb' \
+		'  Alpine:        sudo apk add mariadb-client' \
+		'  Homebrew:      brew install mariadb-connector-c'
 
 setup: connect
