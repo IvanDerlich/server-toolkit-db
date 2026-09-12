@@ -8,7 +8,7 @@ services:
       - "no-new-privileges:true"
     cap_drop:
       - ALL
-    container_name: ${MARIADB_CONTAINER_NAME:-mariadb-hardened}
+    container_name: ${MARIADB_CONTAINER_NAME:?MARIADB_CONTAINER_NAME is required}
     restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?MARIADB_ROOT_PASSWORD is required}
@@ -28,4 +28,4 @@ services:
 
 volumes:
   mariadb_data:
-    name: ${MARIADB_VOLUME_NAME:-mariadb_data}
+    name: ${MARIADB_VOLUME_NAME:?MARIADB_VOLUME_NAME is required}
