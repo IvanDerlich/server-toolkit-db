@@ -3,11 +3,10 @@ SHELL := /bin/bash
 COMPOSE := docker compose
 MARIA_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-.PHONY: help validate up down reset recreate reset-hard restart status logs connect setup
+.PHONY: help up down reset recreate reset-hard restart status logs connect setup
 
 help:
 	@printf '%s\n' \
-		'make validate  Check the required .env values' \
 		'make up        Start MariaDB in the background' \
 		'make down      Stop and remove the MariaDB container' \
 		'make reset     Recreate MariaDB while preserving volumes' \
@@ -19,22 +18,7 @@ help:
 		'make connect   Show commands for connecting to MariaDB' \
 		'make setup     Alias for connect'
 
-validate:
-	@cd "$(MARIA_DIR)" && \
-	if [[ ! -f .env ]]; then \
-		echo '.env file not found in $(MARIA_DIR)' >&2; \
-		exit 1; \
-	fi && \
-	source .env && \
-	for variable in MARIADB_ROOT_PASSWORD MARIADB_PORT MARIADB_DATABASE MARIADB_USER MARIADB_PASSWORD MARIADB_CONTAINER_NAME MARIADB_VOLUME_NAME; do \
-		if [[ -z "$${!variable:-}" ]]; then \
-			echo "Missing required variable: $${variable}" >&2; \
-			exit 1; \
-		fi; \
-	done && \
-	echo 'Validation passed: all required MariaDB variables are set.'
-
-up: validate
+up:
 	@cd "$(MARIA_DIR)" && $(COMPOSE) up -d
 
 down:
