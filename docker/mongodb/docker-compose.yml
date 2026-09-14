@@ -10,8 +10,8 @@ services:
       - "no-new-privileges:true"
     cap_drop:
       - ALL
-    # Run MongoDB as non-root; values come from .env with 999:999 defaults.
-    user: "${MONGODB_UID:-999}:${MONGODB_GID:-999}"
+    # Run MongoDB as non-root; values come from .env.
+    user: "${MONGODB_UID:?MONGODB_UID is required}:${MONGODB_GID:?MONGODB_GID is required}"
     container_name: ${MONGODB_CONTAINER_NAME:?MONGODB_CONTAINER_NAME is required}
     restart: unless-stopped
     ports:
